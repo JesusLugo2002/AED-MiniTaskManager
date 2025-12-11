@@ -1,29 +1,31 @@
 import { getDb } from "../database/db";
 import { Tarea, IdTarea } from "../models/models";
+import ITareaRepository from "./interfaces/ITareaRepository";
 
-export class RepositorioTareasSqlite {
+export class RepositorioTareasSqlite implements ITareaRepository {
+  
   private db = getDb();
 
-  obtenerTodas(): Tarea[] {
+  findAll(): Tarea[] {
     const statement = this.db.prepare("SELECT * FROM tareas");
     return statement.all() as Tarea[];
   }
 
-  obtenerPorId(id: IdTarea): Tarea | undefined {
+  findById(id: IdTarea): Tarea | undefined {
     const statement = this.db.prepare("SELECT * FROM tareas WHERE id = ?");
     return statement.get(id) as Tarea;
   }
 
-  crear(titulo: string, descripcion?: string): Tarea {
+  create(titulo: string, descripcion?: string): Tarea {
     const statement = this.db.prepare(
       "INSERT INTO tareas (titulo, descripcion, completada) VALUES (?, ?, 0)"
     );
     const execution = statement.run(titulo, descripcion);
     const id = Number(execution.lastInsertRowid);
-    return this.obtenerPorId(id) as Tarea;
+    return this.findById(id) as Tarea;
   }
 
-  actualizar(tarea: Tarea): Tarea | undefined {
+  update(tarea: Tarea): Tarea | undefined {
     const statement = this.db.prepare(
       "UPDATE tareas SET titulo = ?, descripcion = ?, completada = ? WHERE id = ?"
     );
@@ -37,10 +39,10 @@ export class RepositorioTareasSqlite {
     if (!hasChanges) {
       return undefined;
     }
-    return this.obtenerPorId(tarea.id);
+    return this.findById(tarea.id);
   }
 
-  borrar(id: IdTarea): boolean {
+  deleteById(id: IdTarea): boolean {
     const statement = this.db.prepare("DELETE FROM tareas WHERE id = ?");
     const execution = statement.run(id);
     return execution.changes > 0;

@@ -1,44 +1,46 @@
 import { Tarea, IdTarea, FiltroTarea } from "../models/models";
+import ITareaRepository from "../repositories/interfaces/ITareaRepository";
 import { RepositorioTareasSqlite } from "../repositories/repositorioTareasSqlite";
 
 export class ServicioTareas {
-  constructor(private repo: RepositorioTareasSqlite) {}
 
-  listar(filtro: FiltroTarea): Tarea[] {
-    const todas = this.repo.obtenerTodas();
-    switch (filtro) {
+  constructor(private repo: ITareaRepository) {}
+
+  findAllWithFilter(filter: FiltroTarea): Tarea[] {
+    const tareas = this.repo.findAll();
+    switch (filter) {
       case "pendientes":
-        return todas.filter((t) => !t.completada);
+        return tareas.filter((t) => !t.completada);
       case "completadas":
-        return todas.filter((t) => t.completada);
+        return tareas.filter((t) => t.completada);
       case "todas":
       default:
-        return todas;
+        return tareas;
     }
   }
 
-  crear(titulo: string, descripcion?: string): Tarea {
+  create(titulo: string, descripcion?: string): Tarea {
     if (!titulo || titulo.trim().length === 0) {
       throw new Error("El título no puede estar vacío");
     }
-    return this.repo.crear(titulo, descripcion);
+    return this.repo.create(titulo, descripcion);
   }
 
-  obtenerPorId(id: IdTarea): Tarea | undefined {
+  findById(id: IdTarea): Tarea | undefined {
     if (id == null) {
       throw new Error("El id no debe ser nulo");
     }
-    return this.repo.obtenerPorId(id);
+    return this.repo.findById(id);
   }
 
-  actualizar(tarea: Tarea): Tarea | undefined {
-    return this.repo.actualizar(tarea);
+  update(tarea: Tarea): Tarea | undefined {
+    return this.repo.update(tarea);
   }
 
-  borrar(id: IdTarea): boolean {
+  deleteById(id: IdTarea): boolean {
     if (id == null) {
         throw new Error("El id no debe ser nulo");
     }
-    return this.repo.borrar(id);
+    return this.repo.deleteById(id);
   }
 }
