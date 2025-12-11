@@ -1,5 +1,5 @@
-import { getDb } from "./db";
-import { Tarea, IdTarea } from "./models";
+import { getDb } from "../database/db";
+import { Tarea, IdTarea } from "../models/models";
 
 export class RepositorioTareasSqlite {
   private db = getDb();

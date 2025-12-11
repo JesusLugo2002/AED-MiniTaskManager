@@ -1,5 +1,5 @@
-import { RepositorioTareasSqlite } from "./repositorioTareasSqlite";
-import { ServicioTareas } from "./servicioTareas";
+import { RepositorioTareasSqlite } from "./repositories/repositorioTareasSqlite";
+import { ServicioTareas } from "./services/servicioTareas";
 
 async function main() {
   const repo = new RepositorioTareasSqlite();

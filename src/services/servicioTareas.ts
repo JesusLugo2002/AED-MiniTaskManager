@@ -1,6 +1,5 @@
-// src/servicioTareas.ts
-import { Tarea, IdTarea, FiltroTarea } from "./models";
-import { RepositorioTareasSqlite } from "./repositorioTareasSqlite";
+import { Tarea, IdTarea, FiltroTarea } from "../models/models";
+import { RepositorioTareasSqlite } from "../repositories/repositorioTareasSqlite";
 
 export class ServicioTareas {
   constructor(private repo: RepositorioTareasSqlite) {}
