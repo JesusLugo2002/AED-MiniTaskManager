@@ -1,18 +1,21 @@
-import {
-  crearTarea,
-  completarTarea,
-  filtrarTareas,
-} from "./tareas";
-import { Tarea } from "./models";
+import { RepositorioTareasSqlite } from "./repositorioTareasSqlite";
+import { ServicioTareas } from "./servicioTareas";
 
-let tareas: Tarea[] = [];
+async function main() {
+  const repo = new RepositorioTareasSqlite();
+  const servicio = new ServicioTareas(repo);
 
-tareas.push(crearTarea(1, "Estudiar TypeScript"));
-tareas.push(crearTarea(2, "Hacer la tarea global"));
-tareas.push(crearTarea(3, "Descansar un rato"));
+  console.log("Tareas actuales:");
+  console.log(servicio.listar("todas"));
 
-tareas = completarTarea(tareas, 1);
+  console.log("Creando una nueva tarea...");
+  const nueva = servicio.crear("Aprender SQLite3 con TypeScript", "Práctica 3");
+  console.log("Tarea creada:", nueva);
 
-console.log("Todas:", tareas);
-console.log("Pendientes:", filtrarTareas(tareas, "pendientes"));
-console.log("Completadas:", filtrarTareas(tareas, "completadas"));
+  console.log("Tareas tras la creación:");
+  console.log(servicio.listar("todas"));
+}
+
+main().catch((error) => {
+  console.error("Error en main:", error);
+});
