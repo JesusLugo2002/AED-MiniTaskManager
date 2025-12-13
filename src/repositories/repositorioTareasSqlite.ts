@@ -1,10 +1,15 @@
+import Database from "better-sqlite3";
 import { getDb } from "../database/db";
 import { Tarea, IdTarea } from "../models/models";
 import ITareaRepository from "./interfaces/ITareaRepository";
 
 export class RepositorioTareasSqlite implements ITareaRepository {
   
-  private db = getDb();
+  private db: Database.Database;
+
+  constructor(db?: Database.Database) {
+    this.db = db ?? getDb();
+  }
 
   findAll(): Tarea[] {
     const statement = this.db.prepare("SELECT * FROM tareas");
