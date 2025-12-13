@@ -48,37 +48,37 @@ async function main() {
       switch (await chooseFilter(rl)) {
         case "2":
           console.log("\nShowing pending tasks...\n");
-          console.log(service.findAllWithFilter("pendientes"));
+          console.log(await service.findAllWithFilter("pendientes"));
           break;
         case "3":
           console.log("\nShowing completed tasks...\n");
-          console.log(service.findAllWithFilter("completadas"));
+          console.log(await service.findAllWithFilter("completadas"));
           break;
         case "1":
         default:
           console.log("\nShowing all tasks...\n");
-          console.log(service.findAllWithFilter("todas"));
+          console.log(await service.findAllWithFilter("todas"));
           break;
       }
       break;
 
     case "2":
       const findId = Number(await askTaskId(rl));
-      const result = service.findById(findId);
+      const result = await service.findById(findId);
       console.log(result == undefined ? "Task not found!" : result);
       break;
 
     case "3":
       console.log("\nCreating a task...");
       const answer = await askTitleDescription(rl);
-      console.log(service.create(answer.title, answer.description));
+      console.log(await service.create(answer.title, answer.description));
       break;
 
     case "4":
       console.log("\nDeleting a task...\n");
       const deleteId = Number(await askTaskId(rl));
       console.log(
-        service.deleteById(deleteId)
+        await service.deleteById(deleteId)
           ? "Task deleted"
           : "Task not found / not deleted"
       );
@@ -95,7 +95,7 @@ async function main() {
         descripcion: updatedInfo.description,
         completada: newStatus,
       };
-      console.log(service.update(newTask))
+      console.log(await service.update(newTask))
       break;
     default:
       console.log("\nERROR: Invalid option\n");

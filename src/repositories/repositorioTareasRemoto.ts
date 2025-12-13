@@ -1,95 +1,48 @@
 import { Tarea, IdTarea } from "../models/models";
 import ITareaRepository from "./interfaces/ITareaRepository";
 
-export type NuevaTarea = Omit<Tarea, "id">;
-
 export class repositorioTareasRemoto implements ITareaRepository {
+  private API_URL = "http://localhost:8080/api/tasks";
 
-  findById(id: IdTarea): Tarea | undefined {
-    throw new Error("Method not implemented.");
-  }
-  create(title: string, description?: string): Tarea {
-    throw new Error("Method not implemented.");
-  }
-  update(task: Tarea): Tarea | undefined {
-    throw new Error("Method not implemented.");
-  }
-  deleteById(id: number): boolean {
-    throw new Error("Method not implemented.");
+  async findAll(): Promise<Tarea[]> {
+    const response = await fetch(this.API_URL);
+    const data = await response.json();
+    return data;
   }
 
-  private API_URL = "http://localhost:3000/tareas";
-
-  findAll(): Tarea[] {
-    let result: Tarea[] = [];
-
-    fetch(this.API_URL).then((response) => {
-      response.json().then((data) => result = data);
-    }).catch((err) => {
-      console.error("Error fetching data from API", err);
-    });
-
-    return result as Tarea[];
+  async findById(id: IdTarea): Promise<Tarea | undefined> {
+    const response = await fetch(`${this.API_URL}/${id}`)
+    const data = await response.json();
+    return data;
   }
-
-  async obtenerTarea(id: IdTarea): Promise<Tarea> {
-    const respuesta = await fetch(`${this.API_URL}/${id}`);
-    if (!respuesta.ok) {
-      throw new Error(
-        `Error al cargar tarea ${id}: ${respuesta.status} ${respuesta.statusText}`
-      );
-    }
-    const datos: unknown = await respuesta.json();
-    return datos as Tarea;
-  }
-
-  async crearTareaRemota(nueva: NuevaTarea): Promise<Tarea> {
-    const respuesta = await fetch(this.API_URL, {
+  
+  async create(title: string, description?: string): Promise<Tarea> {
+    const options = {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(nueva),
-    });
-
-    if (!respuesta.ok) {
-      throw new Error(
-        `Error al crear tarea: ${respuesta.status} ${respuesta.statusText}`
-      );
-    }
-
-    const datos: unknown = await respuesta.json();
-    return datos as Tarea;
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ title: title, description: description }),
+    };
+    const response = await fetch(this.API_URL, options);
+    const data = await response.json();
+    return data;
   }
 
-  async actualizarTareaRemota(tarea: Tarea): Promise<Tarea> {
-    const respuesta = await fetch(`${this.API_URL}/${tarea.id}`, {
+  async update(task: Tarea): Promise<Tarea | undefined> {
+    const options = {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(tarea),
-    });
-
-    if (!respuesta.ok) {
-      throw new Error(
-        `Error al actualizar tarea ${tarea.id}: ${respuesta.status} ${respuesta.statusText}`
-      );
-    }
-
-    const datos: unknown = await respuesta.json();
-    return datos as Tarea;
+      body: JSON.stringify(task),
+    };
+    const response = await fetch(`${this.API_URL}/${task.id}`, options);
+    const data = await response.json();
+    return data;
   }
 
-  async borrarTareaRemota(id: IdTarea): Promise<void> {
-    const respuesta = await fetch(`${this.API_URL}/${id}`, {
-      method: "DELETE",
-    });
-
-    if (!respuesta.ok) {
-      throw new Error(
-        `Error al borrar tarea ${id}: ${respuesta.status} ${respuesta.statusText}`
-      );
-    }
+  async deleteById(id: number): Promise<boolean> {
+    const options = { method: "DELETE" }
+    const response = await fetch(`${this.API_URL}/${id}`, options);
+    return response.ok;
   }
 }
