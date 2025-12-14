@@ -1,6 +1,4 @@
 import * as readline from "readline/promises";
-import { ServicioTareas } from "./services/servicioTareas";
-import ITareaRepository from "./repositories/interfaces/ITareaRepository";
 import {
   askStatus,
   askTaskId,
@@ -9,9 +7,11 @@ import {
   chooseOperation,
   chooseRepository,
 } from "./cli/cli";
-import { RepositorioTareasSqlite } from "./repositories/repositorioTareasSqlite";
-import { repositorioTareasRemoto } from "./repositories/repositorioTareasRemoto";
-import { Tarea } from "./models/models";
+import { TaskService } from "./services/TaskService";
+import { Task, TaskFilter } from "./models/models";
+import ITaskRepository from "./repositories/interfaces/ITaskRepository";
+import { TaskRepositoryLocal } from "./repositories/TaskRepositoryLocal";
+import { TaskRepositoryRemote } from "./repositories/TaskRepositoryRemote";
 
 async function main() {
   const rl = readline.createInterface({
@@ -20,16 +20,16 @@ async function main() {
   });
 
   console.log("-=- Welcome to my mini task manager -=-");
-  let repository: ITareaRepository | undefined = undefined;
+  let repository: ITaskRepository | undefined = undefined;
 
   switch (await chooseRepository(rl)) {
     case "1":
       console.log("Local database connected!\n");
-      repository = new RepositorioTareasSqlite();
+      repository = new TaskRepositoryLocal();
       break;
     case "2":
       console.log("Remote database connected!\n");
-      repository = new repositorioTareasRemoto();
+      repository = new TaskRepositoryRemote();
       break;
     default:
       console.log("Invalid option");
@@ -41,23 +41,23 @@ async function main() {
     return;
   }
 
-  const service = new ServicioTareas(repository);
+  const service = new TaskService(repository);
 
   switch (await chooseOperation(rl)) {
     case "1":
       switch (await chooseFilter(rl)) {
         case "2":
           console.log("\nShowing pending tasks...\n");
-          console.log(await service.findAllWithFilter("pendientes"));
+          console.log(await service.findAllWithFilter(TaskFilter.PENDING));
           break;
         case "3":
           console.log("\nShowing completed tasks...\n");
-          console.log(await service.findAllWithFilter("completadas"));
+          console.log(await service.findAllWithFilter(TaskFilter.COMPLETED));
           break;
         case "1":
         default:
           console.log("\nShowing all tasks...\n");
-          console.log(await service.findAllWithFilter("todas"));
+          console.log(await service.findAllWithFilter(TaskFilter.ALL));
           break;
       }
       break;
@@ -78,7 +78,7 @@ async function main() {
       console.log("\nDeleting a task...\n");
       const deleteId = Number(await askTaskId(rl));
       console.log(
-        await service.deleteById(deleteId)
+        (await service.deleteById(deleteId))
           ? "Task deleted"
           : "Task not found / not deleted"
       );
@@ -89,13 +89,13 @@ async function main() {
       const updateId = Number(await askTaskId(rl));
       const updatedInfo = await askTitleDescription(rl);
       const newStatus = await askStatus(rl);
-      const newTask: Tarea = {
+      const newTask: Task = {
         id: updateId,
-        titulo: updatedInfo.title,
-        descripcion: updatedInfo.description,
-        completada: newStatus,
+        title: updatedInfo.title,
+        description: updatedInfo.description,
+        completed: newStatus,
       };
-      console.log(await service.update(newTask))
+      console.log(await service.update(newTask));
       break;
     default:
       console.log("\nERROR: Invalid option\n");

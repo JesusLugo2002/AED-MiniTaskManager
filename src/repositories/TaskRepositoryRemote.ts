@@ -1,10 +1,10 @@
-import { Tarea, IdTarea } from "../models/models";
-import ITareaRepository from "./interfaces/ITareaRepository";
+import { Task, TaskId } from "../models/models";
+import ITaskRepository from "./interfaces/ITaskRepository";
 
-export class repositorioTareasRemoto implements ITareaRepository {
+export class TaskRepositoryRemote implements ITaskRepository {
   private API_URL = "http://localhost:8080/api/tasks";
 
-  async findAll(): Promise<Tarea[]> {
+  async findAll(): Promise<Task[]> {
     let data = [];
     try {
       const response = await fetch(this.API_URL);
@@ -15,7 +15,7 @@ export class repositorioTareasRemoto implements ITareaRepository {
     return data;
   }
 
-  async findById(id: IdTarea): Promise<Tarea | undefined> {
+  async findById(id: TaskId): Promise<Task | undefined> {
     let data = undefined;
     try {
       const response = await fetch(`${this.API_URL}/${id}`);
@@ -29,7 +29,7 @@ export class repositorioTareasRemoto implements ITareaRepository {
     return data;
   }
 
-  async create(title: string, description?: string): Promise<Tarea> {
+  async create(title: string, description?: string): Promise<Task> {
     let data;
     try {
       const options = {
@@ -45,7 +45,7 @@ export class repositorioTareasRemoto implements ITareaRepository {
     return data;
   }
 
-  async update(task: Tarea): Promise<Tarea | undefined> {
+  async update(task: Task): Promise<Task | undefined> {
     let data = undefined;
     const taskId = task.id;
     try {
@@ -67,7 +67,7 @@ export class repositorioTareasRemoto implements ITareaRepository {
     return data;
   }
 
-  async deleteById(id: number): Promise<boolean> {
+  async deleteById(id: TaskId): Promise<boolean> {
     const options = { method: "DELETE" };
     const response = await fetch(`${this.API_URL}/${id}`, options);
     return response.ok;

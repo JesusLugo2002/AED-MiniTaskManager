@@ -1,25 +1,29 @@
+import { ALL } from "dns";
+
 /**
- * Representa una tarea del gestor.
+ * Represents a task.
  */
-export interface Tarea {
+export interface Task {
   /**
-   * Identificador numerico unico.
+   * Unique identifier,
    */
   id: number;
   /**
-   * Titulo breve de la tarea.
+   * Task title.
    */
-  titulo: string;
+  title: string;
   /**
-   * Detalle opcional de la tarea.
+   * Optional task description.
    */
-  descripcion?: string;
+  description?: string;
   /**
-   * Indica si la tarea esta completada.
+   * Completed status.
    */
-  completada: boolean;
+  completed: boolean;
 }
 
-export type IdTarea = number;
+export type TaskId = number;
 
-export type FiltroTarea = "todas" | "pendientes" | "completadas";
+export enum TaskFilter {
+  ALL, PENDING, COMPLETED
+}

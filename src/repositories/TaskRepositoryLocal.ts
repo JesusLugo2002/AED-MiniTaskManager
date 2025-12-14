@@ -1,9 +1,9 @@
 import Database from "better-sqlite3";
 import { getDb } from "../database/db";
-import { Tarea, IdTarea } from "../models/models";
-import ITareaRepository from "./interfaces/ITareaRepository";
+import { Task, TaskId } from "../models/models";
+import ITaskRepository from "./interfaces/ITaskRepository";
 
-export class RepositorioTareasSqlite implements ITareaRepository {
+export class TaskRepositoryLocal implements ITaskRepository {
   
   private db: Database.Database;
 
@@ -11,43 +11,40 @@ export class RepositorioTareasSqlite implements ITareaRepository {
     this.db = db ?? getDb();
   }
 
-  findAll(): Tarea[] {
+  findAll(): Task[] {
     const statement = this.db.prepare("SELECT * FROM tareas");
-    return statement.all() as Tarea[];
+    return statement.all() as Task[];
   }
 
-  findById(id: IdTarea): Tarea | undefined {
+  findById(id: TaskId): Task | undefined {
     const statement = this.db.prepare("SELECT * FROM tareas WHERE id = ?");
-    return statement.get(id) as Tarea;
+    return statement.get(id) as Task;
   }
 
-  create(titulo: string, descripcion?: string): Tarea {
+  create(title: string, description?: string): Task {
     const statement = this.db.prepare(
       "INSERT INTO tareas (titulo, descripcion, completada) VALUES (?, ?, 0)"
     );
-    const execution = statement.run(titulo, descripcion);
+    const execution = statement.run(title, description);
     const id = Number(execution.lastInsertRowid);
-    return this.findById(id) as Tarea;
+    return this.findById(id) as Task;
   }
 
-  update(tarea: Tarea): Tarea | undefined {
+  update(task: Task): Task | undefined {
     const statement = this.db.prepare(
       "UPDATE tareas SET titulo = ?, descripcion = ?, completada = ? WHERE id = ?"
     );
     const execution = statement.run(
-      tarea.titulo,
-      tarea.descripcion,
-      tarea.completada ? 1 : 0,
-      tarea.id
+      task.title,
+      task.description,
+      task.completed ? 1 : 0,
+      task.id
     );
     const hasChanges = execution.changes > 0;
-    if (!hasChanges) {
-      return undefined;
-    }
-    return this.findById(tarea.id);
+    return hasChanges ? this.findById(task.id) : undefined;
   }
 
-  deleteById(id: IdTarea): boolean {
+  deleteById(id: TaskId): boolean {
     const statement = this.db.prepare("DELETE FROM tareas WHERE id = ?");
     const execution = statement.run(id);
     return execution.changes > 0;
