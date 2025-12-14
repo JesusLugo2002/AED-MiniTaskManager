@@ -9,7 +9,7 @@
     // See also https://aka.ms/tsconfig/module
     "module": "commonjs",
     "target": "es2019",
-    "types": ["node", "better-sqlite3"],
+    "types": ["node", "better-sqlite3", "jest"],
     // For nodejs:
     // "lib": ["esnext"],
     // "types": ["node"],
