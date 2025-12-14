@@ -6,6 +6,12 @@
 
 Ejecute el fichero `run.sh` haciendo *click* en él o escribiendo en la terminal `./run.sh`.
 
+### ¿Qué hace el fichero `run.sh`?
+
+1. Instalar dependencias. `npm install`
+2. Compilar el programa. `npx tsc`
+3. Ejecutarlo. `node /dist/index.js`
+
 ## Estructura del proyecto
 
 ```code
