@@ -1,8 +1,8 @@
 <div align=justify>
 
-# MiniTaskManager
+# ✔️ MiniTaskManager
 
-## ¿Cómo se ejecuta el proyecto?
+## ❓¿Cómo se ejecuta el proyecto?
 
 Ejecute el fichero `run.sh` haciendo *click* en él o escribiendo en la terminal `./run.sh`.
 
@@ -12,7 +12,7 @@ Ejecute el fichero `run.sh` haciendo *click* en él o escribiendo en la terminal
 2. Compilar el programa. `npx tsc`
 3. Ejecutarlo. `node /dist/index.js`
 
-## Estructura del proyecto
+## 🔧 Estructura del proyecto
 
 ```code
 ./src/
@@ -32,7 +32,7 @@ Ejecute el fichero `run.sh` haciendo *click* en él o escribiendo en la terminal
 ├── index.ts -> Fichero principal del programa.
 ```
 
-## Endpoints remotos
+## :mag: Endpoints remotos
 
 1. **/api/tasks** - **Método GET** - Obtiene todas las tareas.
 2. **/api/tasks/<task_id>** - **Método GET** - Obtiene la información de la tarea con id `task_id`.
